@@ -1,4 +1,4 @@
-from fastapi import FastAPI 
+from fastapi import FastAPI , HTTPException
 # creating an object
 app = FastAPI()
 # get(endpoint/path)
@@ -25,4 +25,12 @@ def get_all_posts():
 @app.get("/posts/{id}")
 # in function also id has to be given
 def get_post_by_id(id:int):
+    # want to return an error
+    # if id is not in the posts
+    # 1) import HTTPException
+    # 2) raise the error
+
+    if id not in text_posts:
+        # HTTPException(status_code,details)
+        raise HTTPException(404,"post not found")
     return text_posts[id]
