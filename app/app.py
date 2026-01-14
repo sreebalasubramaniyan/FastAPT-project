@@ -1,9 +1,21 @@
-from fastapi import FastAPI , HTTPException
-from  app.schemas import PostCreate
-# creating an object
-app = FastAPI()
-# get(endpoint/path)
 
+from fastapi import FastAPI , HTTPException, File,UploadFile,Depends
+from  app.schemas import PostCreate
+# importing our database
+from app.db import Post,create_db_and_tables,get_async_session
+from sqlalchemy.ext.asyncio import AsyncSession
+from contextlib import  asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    await create_db_and_tables()
+    yield
+
+
+
+# creating an object
+app = FastAPI(lifespan=lifespan)
+# get(endpoint/path)
 
 #1)creating simple end point
 
@@ -87,9 +99,9 @@ def get_post_by_id(id:int):
     """
 
 #4 ) learn about post endpoint
-
+# for best documentation we gonna mention the each data type
 @app.post("/posts")
-def create_post(post:PostCreate): # for sending a data we gonna learn new thing called schema
+def create_post(post:PostCreate)->PostCreate: # for sending a data we gonna learn new thing called schema
     # using requestBody 
         # body is kinda hidden info
         # creating schema we can acces that body
@@ -100,3 +112,4 @@ def create_post(post:PostCreate): # for sending a data we gonna learn new thing 
     text_posts[new_id] = new_post
     # return new_post as the response
     return new_post
+
